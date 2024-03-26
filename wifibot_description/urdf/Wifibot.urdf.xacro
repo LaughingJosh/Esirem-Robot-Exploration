@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot name="pincher_arm" xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+  <xacro:include filename="$(find wifibot_description)/urdf/Wifibot_macro.xacro"/>
+  <xacro:wifibot_v2/>
+  <xacro:include filename="$(find pincher_arm_description)/urdf/pincher_arm.urdf.xacro"/>
+
+      <joint name="arm_base_joint" type="fixed">
+        <origin xyz="0 0 0.01525"/>  
+        <parent link="pincher_link"/>
+        <child link="arm_base_link"/>
+      </joint>
+</robot>
