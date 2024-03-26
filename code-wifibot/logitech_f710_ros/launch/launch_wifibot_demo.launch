@@ -1,0 +1,20 @@
+<launch>
+    <arg name="robot_name" default="WifiBot" />
+    <arg name="video_device" default="/dev/video0" />
+
+    <include file="$(find roswifibot)/launch/robot_launch.launch">
+        <arg name="robot"     value="$(arg robot_name)"/>
+    </include>
+
+    <include file="$(find usb_cam)/launch/usb_cam-test.launch">
+        <arg name="video_device"     value="$(arg video_device)"/>
+    </include>
+
+    <node name="f710_joy_node" pkg="joy" type="joy_node">
+        <param name="autorepeat_rate" type="double" value="10"/>
+    </node>
+
+    <node name="f710_teleop_joy_node" pkg="logitech_f710_joy_ros" type="f710_teleop_joy" output="screen">
+        <param name="basename" type="string" value="$(arg robot_name)"/>
+    </node>
+</launch>
