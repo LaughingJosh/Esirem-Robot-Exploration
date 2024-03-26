@@ -1,0 +1,425 @@
+<?xml version="1.0"?>
+<!-- PhantomX Pincher arm description 
+BSD 3-Clause License
+
+Copyright (c) 2021, Willow Garage, Inc.
+Copyright (c) 2021, Kell Ideas Ltd.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the Willow Garage, Inc. nor the names of its
+      contributors may be used to endorse or promote products derived from
+      this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find pincher_arm_description)/urdf/arm_hardware.xacro"/>
+
+  <material name="White">
+    <color rgba="0.87 0.90 0.87 1.0"/>
+  </material>
+  <material name="Black">
+    <color rgba="0.08 0.08 0.08 1.0"/>
+  </material>
+  <material name="Gray">
+    <color rgba="0.2 0.2 0.21 1.0"/>
+  </material>
+  <material name="Green">
+    <color rgba="0.22 0.32 0.14 1.0"/>
+  </material>
+
+
+
+ 
+  <link name="arm_base_link"/>
+  <xacro:macro name="pincher_arm" params="
+      color:=Gray
+      joints_vlimit:=1.571
+      pan_llimit:=-2.617
+      pan_ulimit:=2.617
+      shoulder_llimit:=-2.09
+      shoulder_ulimit:=2.09
+      elbow_llimit:=-2.42
+      elbow_ulimit:=2.42
+      wrist_llimit:=-1.71
+      wrist_ulimit:=1.79
+      gripper_llimit:=-2.6
+      gripper_ulimit:=0.0">
+
+
+    <!-- shoulder pan joint -->
+    <xacro:dynamixel_AX12_fixed parent="arm_base_link" name="arm_shoulder_pan_servo">
+      <origin xyz="-0.01035 0 0.17511" rpy="${pi/2} 0 ${pi/2}"/>
+    </xacro:dynamixel_AX12_fixed>
+
+    <xacro:bioloid_F3_revolute parent="arm_shoulder_pan_servo_link" name="arm_shoulder_pan" color="${color}"
+                               vlimit="${joints_vlimit}" llimit="${pan_llimit}" ulimit="${pan_ulimit}">
+      <origin xyz="0 ${AX12_WIDTH/2} 0" rpy="${-pi/2} ${pi/2} ${pi}"/>
+    </xacro:bioloid_F3_revolute>
+
+    <!-- shoulder lift joint -->
+    <xacro:dynamixel_AX12_fixed parent="arm_shoulder_pan_link" name="arm_shoulder_lift_servo">
+      <origin xyz="0 0 ${-AX12_HEIGHT-F10_HEIGHT+0.001}" rpy="0 ${pi} 0"/>
+    </xacro:dynamixel_AX12_fixed>
+
+    <xacro:bioloid_F4_revolute parent="arm_shoulder_lift_servo_link" name="arm_shoulder_lift" color="${color}"
+                               vlimit="${joints_vlimit}" llimit="${shoulder_llimit}" ulimit="${shoulder_ulimit}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:bioloid_F4_revolute>
+
+    <xacro:bioloid_F10_fixed parent="arm_shoulder_lift_link" name="arm_shoulder_F10_0" color="${color}">
+      <origin xyz="0 0 ${F4_HEIGHT+F10_HEIGHT/2}" rpy="0 0 0"/>
+    </xacro:bioloid_F10_fixed>
+
+    <xacro:bioloid_F10_fixed parent="arm_shoulder_F10_0_link" name="arm_shoulder_F10_1" color="${color}">
+      <origin xyz="0 0 ${F10_HEIGHT}" rpy="0 0 0"/>
+    </xacro:bioloid_F10_fixed>
+
+    <xacro:bioloid_F10_fixed parent="arm_shoulder_F10_1_link" name="arm_shoulder_F10_2" color="${color}">
+      <origin xyz="0 0 ${F10_HEIGHT}" rpy="0 0 0"/>
+    </xacro:bioloid_F10_fixed>
+
+    <xacro:bioloid_F3_fixed parent="arm_shoulder_F10_2_link" name="arm_shoulder_F3_0" color="${color}">
+      <origin xyz="0 0 ${F10_HEIGHT/2}" rpy="0 ${pi} 0"/>
+    </xacro:bioloid_F3_fixed>
+
+    <!-- elbow joint -->
+    <xacro:dynamixel_AX12_fixed parent="arm_shoulder_F3_0_link" name="arm_elbow_flex_servo">
+      <origin xyz="0 0 ${-AX12_HEIGHT-F10_HEIGHT+0.001}" rpy="0 ${pi} 0"/>
+    </xacro:dynamixel_AX12_fixed>
+
+    <xacro:bioloid_F4_revolute parent="arm_elbow_flex_servo_link" name="arm_elbow_flex" color="${color}"
+                               vlimit="${joints_vlimit}" llimit="${elbow_llimit}" ulimit="${elbow_ulimit}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:bioloid_F4_revolute>
+
+    <xacro:bioloid_F10_fixed parent="arm_elbow_flex_link" name="arm_elbow_F10_0" color="${color}">
+      <origin xyz="0 0 ${F4_HEIGHT+F10_HEIGHT/2}" rpy="0 0 0"/>
+    </xacro:bioloid_F10_fixed>
+
+    <xacro:bioloid_F10_fixed parent="arm_elbow_F10_0_link" name="arm_elbow_F10_1" color="${color}">
+      <origin xyz="0 0 ${F10_HEIGHT}" rpy="0 0 0"/>
+    </xacro:bioloid_F10_fixed>
+
+    <xacro:bioloid_F10_fixed parent="arm_elbow_F10_1_link" name="arm_elbow_F10_2" color="${color}">
+      <origin xyz="0 0 ${F10_HEIGHT}" rpy="0 0 0"/>
+    </xacro:bioloid_F10_fixed>
+
+    <xacro:bioloid_F3_fixed parent="arm_elbow_F10_2_link" name="arm_elbow_F3_0" color="${color}">
+      <origin xyz="0 0 ${F10_HEIGHT/2}" rpy="0 ${pi} 0"/>
+    </xacro:bioloid_F3_fixed>
+
+    <!-- wrist joint -->
+    <xacro:dynamixel_AX12_fixed parent="arm_elbow_F3_0_link" name="arm_wrist_flex_servo">
+      <origin xyz="0 0 ${-AX12_HEIGHT-F10_HEIGHT+0.001}" rpy="0 ${pi} 0"/>
+    </xacro:dynamixel_AX12_fixed>
+
+    <xacro:bioloid_F2_revolute parent="arm_wrist_flex_servo_link" name="arm_wrist_flex" color="${color}"
+                               vlimit="${joints_vlimit}" llimit="${wrist_llimit}" ulimit="${wrist_ulimit}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:bioloid_F2_revolute>
+
+    <xacro:bioloid_F3_fixed parent="arm_wrist_flex_link" name="arm_wrist_F3_0" color="${color}">
+      <origin xyz="0 0 ${F2_HEIGHT}" rpy="0 ${pi} ${-pi}"/>
+    </xacro:bioloid_F3_fixed>
+    
+    <!-- gripper joint -->
+    <xacro:dynamixel_AX12_fixed parent="arm_wrist_F3_0_link" name="gripper_servo" >
+      <origin xyz="0 0 ${-AX12_WIDTH/2}" rpy="${pi/2} ${pi} ${pi/2}"/>
+    </xacro:dynamixel_AX12_fixed>
+    
+    <xacro:gripper_finger_base parent="gripper_servo_link" name="gripper_finger_base" color="${color}">
+      <origin xyz="0  ${AX12_WIDTH/2} 0" rpy="${pi} 0 ${pi/2}"/>
+    </xacro:gripper_finger_base>
+
+    <link name="gripper_active_link"/>
+    <joint name="gripper_joint" type="revolute">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit effort="30" velocity="${joints_vlimit}" lower="${gripper_llimit}" upper="${gripper_ulimit}"/>
+      <parent link="gripper_finger_base_link"/>
+      <child link="gripper_active_link"/>
+    </joint>
+
+    <!-- Finger 1 --> 
+    <xacro:pincher_finger name="gripper_finger1" color="${color}" >
+      <origin xyz="0 0.0115 0" rpy="${pi/2} 0 ${pi/2}"/>
+    </xacro:pincher_finger>
+
+    <joint name="gripper_finger1_joint" type="prismatic">
+      <origin xyz="0.019 0 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="30" velocity="0.01" lower="0.001" upper="0.0158"/>
+      <parent link="gripper_finger_base_link"/>
+      <child link="gripper_finger1_link"/>
+    </joint> 
+      
+    <!-- Finger 2 -->
+    <xacro:pincher_finger name="gripper_finger2" color="${color}" >
+      <origin xyz="0 0.0115 0" rpy="${pi/2} 0 ${pi/2}"/>
+    </xacro:pincher_finger>
+
+    <joint name="gripper_finger2_joint" type="prismatic">
+      <origin xyz="0.019 0 0" rpy="${pi} 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="30" velocity="0.01" lower="0.001" upper="0.0158"/>
+      <parent link="gripper_finger_base_link"/>
+      <child link="gripper_finger2_link"/>
+      <!-- <mimic joint="gripper_finger1_joint"/> -->
+    </joint>
+
+    <!-- fake gripper joint -->
+    <link name="gripper_fake_link"/>
+    <joint name="gripper_fake_joint" type="revolute">
+      <origin xyz="0.02 0 0" rpy="0 0 0"/>
+      <parent link="gripper_finger_base_link"/>
+      <child link="gripper_fake_link"/>
+      <limit effort="30" velocity="1" lower="-3.14" upper="3.14"/>
+      <axis xyz="1 0 0"/>
+    </joint>
+
+  </xacro:macro>
+
+  <xacro:include filename="$(find wifibot_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find wifibot_description)/urdf/Wifibot.trans" />
+  <xacro:include filename="$(find wifibot_description)/urdf/Wifibot.gazebo" />
+  <xacro:macro name="wifibot_v2">
+      <joint name="chassis_joint" type="fixed">
+        <parent link="arm_base_link"/>
+        <child link="chassis_link"/>
+        <origin xyz="-0.1 0 0"  rpy="0 0 0"/>
+      </joint>
+      <link name="chassis_link">
+        <inertial>
+          <origin xyz="0.0008538308347129231 -0.00188802983375572 0.06669854261691827" rpy="0 0 0"/>
+          <mass value="30.263664321753744"/>
+          <inertia ixx="0.124124" iyy="0.154149" izz="0.248504" ixy="-2e-05" iyz="-3e-06" ixz="-2.4e-05"/>
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/base_link.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+          <material name="gray"/>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/base_link.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="front_left_wheel_1">
+        <inertial>
+          <origin xyz="-1.7301418626936016e-07 0.046226741977504066 2.256949969164923e-06" rpy="0 0 0"/>
+          <mass value="1.1710647510299943"/>
+          <inertia ixx="0.002726" iyy="0.003208" izz="0.002726" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+        </inertial>
+        <visual>
+          <origin xyz="-0.090837 -0.102108 -0.06551" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/front_left_wheel_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+          <material name="gray"/>
+        </visual>
+        <collision>
+          <origin xyz="-0.090837 -0.102108 -0.06551" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/front_left_wheel_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="front_right_wheel_1">
+        <inertial>
+          <origin xyz="-2.0148622627280677e-07 -0.0462270174481091 2.2569499691510453e-06" rpy="0 0 0"/>
+          <mass value="1.1710647510299943"/>
+          <inertia ixx="0.002726" iyy="0.003208" izz="0.002726" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+        </inertial>
+        <visual>
+          <origin xyz="-0.090837 0.105892 -0.06551" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/front_right_wheel_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+          <material name="gray"/>
+        </visual>
+        <collision>
+          <origin xyz="-0.090837 0.105892 -0.06551" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/front_right_wheel_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="rear_left_wheel_1">
+        <inertial>
+          <origin xyz="-1.7301418654691592e-07 0.04622674197750512 2.25694996924819e-06" rpy="0 0 0"/>
+          <mass value="1.1710647510299943"/>
+          <inertia ixx="0.002726" iyy="0.003208" izz="0.002726" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+        </inertial>
+        <visual>
+          <origin xyz="0.089163 -0.102108 -0.06551" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/rear_left_wheel_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+          <material name="gray"/>
+        </visual>
+        <collision>
+          <origin xyz="0.089163 -0.102108 -0.06551" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/rear_left_wheel_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="rear_right_wheel_1">
+        <inertial>
+          <origin xyz="-2.0148622641158465e-07 -0.04622701681332976 2.2569499692204342e-06" rpy="0 0 0"/>
+          <mass value="1.1710647510299943"/>
+          <inertia ixx="0.002726" iyy="0.003208" izz="0.002726" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+        </inertial>
+        <visual>
+          <origin xyz="0.089163 0.105892 -0.06551" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/rear_right_wheel_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+          <material name="gray"/>
+        </visual>
+        <collision>
+          <origin xyz="0.089163 0.105892 -0.06551" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/rear_right_wheel_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="support_v1_1">
+        <inertial>
+          <origin xyz="-0.2017991285587109 -0.17452200920541733 -0.023010000000000128" rpy="0 0 0"/>
+          <mass value="1.2598198733152801"/>
+          <inertia ixx="0.003357" iyy="0.003352" izz="0.006704" ixy="1.2e-05" iyz="0.0" ixz="-0.0"/>
+        </inertial>
+        <visual>
+          <origin xyz="-0.215729 -0.171945 -0.13662" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/support_v1_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+          <material name="white"/>
+        </visual>
+        <collision>
+          <origin xyz="-0.215729 -0.171945 -0.13662" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/support_v1_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="capot_v1_1">
+        <inertial>
+          <origin xyz="0.014910124960665993 0.09303956377418005 0.028422321571636835" rpy="0 0 0"/>
+          <mass value="1.8514525863187674"/>
+          <inertia ixx="0.005929" iyy="0.006616" izz="0.011811" ixy="-5e-06" iyz="2e-06" ixz="-1.5e-05"/>
+        </inertial>
+        <visual>
+          <origin xyz="-0.000837 0.094892 -0.11611" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/capot_v1_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+          <material name="white"/>
+        </visual>
+        <collision>
+          <origin xyz="-0.000837 0.094892 -0.11611" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/capot_v1_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <link name="support_camera_v1_1">
+        <inertial>
+          <origin xyz="0.018121000409102618 2.064957086522854e-07 0.05131900678806825" rpy="0 0 0"/>
+          <mass value="0.25111231247455446"/>
+          <inertia ixx="0.000285" iyy="0.000289" izz="6.7e-05" ixy="0.0" iyz="0.0" ixz="-4e-06"/>
+        </inertial>
+        <visual>
+          <origin xyz="0.072328 0.001896 -0.16111" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/support_camera_v1_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+          <material name="white"/>
+        </visual>
+        <collision>
+          <origin xyz="0.072328 0.001896 -0.16111" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://wifibot_description/meshes/support_camera_v1_1.stl" scale="0.01 0.01 0.01"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <joint name="front_left_wheel_joint" type="continuous">
+        <origin xyz="0.090837 0.102108 0.06551" rpy="0 0 0"/>
+        <parent link="chassis_link"/>
+        <child link="front_left_wheel_1"/>
+        <axis xyz="0.0 1.0 0.0"/>
+      </joint>
+
+      <joint name="front_right_wheel_joint" type="continuous">
+        <origin xyz="0.090837 -0.105892 0.06551" rpy="0 0 0"/>
+        <parent link="chassis_link"/>
+        <child link="front_right_wheel_1"/>
+        <axis xyz="0.0 1.0 0.0"/>
+      </joint>
+
+      <joint name="rear_left_wheel_joint" type="continuous">
+        <origin xyz="-0.089163 0.102108 0.06551" rpy="0 0 0"/>
+        <parent link="chassis_link"/>
+        <child link="rear_left_wheel_1"/>
+        <axis xyz="0.0 1.0 0.0"/>
+      </joint>
+
+      <joint name="rear_right_wheel_joint" type="continuous">
+        <origin xyz="-0.089163 -0.105892 0.06551" rpy="0 0 0"/>
+        <parent link="chassis_link"/>
+        <child link="rear_right_wheel_1"/>
+        <axis xyz="-0.0 -1.0 -0.0"/>
+      </joint>
+
+      <joint name="Rigide 22" type="fixed">
+        <origin xyz="0.215729 0.171945 0.13662" rpy="0 0 0"/>
+        <parent link="chassis_link"/>
+        <child link="support_v1_1"/>
+      </joint>
+
+      <joint name="Rigide 23" type="fixed">
+        <origin xyz="-0.214892 -0.266837 -0.02051" rpy="0 0 0"/>
+        <parent link="support_v1_1"/>
+        <child link="capot_v1_1"/>
+      </joint>
+
+      <joint name="Rigide 24" type="fixed">
+        <origin xyz="-0.073165 0.092996 0.045" rpy="0 0 0"/>
+        <parent link="capot_v1_1"/>
+        <child link="support_camera_v1_1"/>
+      </joint>
+  </xacro:macro>
+</robot>
