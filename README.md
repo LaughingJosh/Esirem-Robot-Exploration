@@ -1,8 +1,9 @@
-# Esirem-Robot-Exploration
-In order to explore risky environments, the robot will need to be able to move in multiple axes. Its movement should be adapted to various terrains (rocky, flat, sandy...), which we'll limit here to include wet conditions. To enable remote visualization of what the robot captures, it will be equipped with an integrated camera (webcam) and live image transmission. This camera should be capable of detecting desired objects from a distance. Additionally, it will require a robotic arm for controllable and automated interaction with the surroundings.
+The project has been completed with the aim of describing it for the GitHub repository.
 
-Our material needs are as follows:
+"To explore high-risk environments, the robot has been equipped to maneuver across multiple axes, adapting its movement to various terrains such as rocky, flat, sandy, and wet conditions. For remote visualization of its footage, the robot is equipped with an integrated camera (webcam) and live image transmission capabilities. The camera is designed to detect desired objects from a distance. Furthermore, the robot features a controllable and automated robotic arm for interacting with its surroundings.
+
+Our material requirements for the project include:
 - A chassis with its battery
 - A brushless motor for movement
 - A camera
-- A robotic arm
+- A robotic arm"
